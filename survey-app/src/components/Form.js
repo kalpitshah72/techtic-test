@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Radio, Checkbox, Input, Button } from "antd";
 import { isEmpty } from "lodash";
+import axios from "axios";
 
 const { TextArea } = Input;
 export default function Form() {
@@ -35,7 +36,26 @@ export default function Form() {
       showError("Hobby");
     } else {
       setError("");
-      console.log(formDetails);
+      axios
+        .post(
+          `http://localhost:5000/api/auth/form`,
+          {
+            ...formDetails,
+          },
+          {
+            headers: {
+              Authorization: `Basic ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .catch((error) => {
+          if (error) {
+            alert("You've already filled the form.");
+          }
+        })
+        .then((res) => {
+          console.log(res);
+        });
     }
   };
 
