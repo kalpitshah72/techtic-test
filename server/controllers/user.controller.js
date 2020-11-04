@@ -20,7 +20,7 @@ const google = async (req, res) => {
     if (existing_user) {
       const token = jwt.sign(
         {
-          email: existing_user.email,
+          id: existing_user._id,
         },
         "secretKey",
         {
@@ -40,7 +40,7 @@ const google = async (req, res) => {
       if (saved_user) {
         const token = jwt.sign(
           {
-            email: saved_user.email,
+            id: saved_user._id,
           },
           "secretKey",
           {
@@ -69,7 +69,7 @@ const facebook = async (req, res) => {
   if (existing_user) {
     const token = jwt.sign(
       {
-        email: existing_user.email,
+        id: existing_user._id,
       },
       "secretKey",
       {
@@ -89,7 +89,7 @@ const facebook = async (req, res) => {
     if (saved_user) {
       const token = jwt.sign(
         {
-          email: saved_user.email,
+          id: saved_user._id,
         },
         "secretKey",
         {
@@ -106,12 +106,42 @@ const facebook = async (req, res) => {
 
 const form = async (req, res) => {
   const { gender, day, hobby, sport } = req.body;
-  const formInstance = new Form({
-    day,
-    gender,
-    hobby,
-    sport,
-  });
+  const auth_headers = req.headers.authorization;
+  const token = auth_headers.split(" ")[1];
+  try {
+    jwt.verify(token, "secretKey", async (error, user) => {
+      if (!error) {
+        const { id } = user;
+        const existingUserForm = await Form.findOne({
+          user: id,
+        });
+        if (existingUserForm) {
+          res.status(409).json({
+            message: "You've filled the form",
+          });
+        } else {
+          const formInstance = new Form({
+            day,
+            gender,
+            hobby,
+            sport,
+            user: id,
+          });
+          const savedFormInstance = await formInstance.save();
+          if (savedFormInstance) {
+            res.status(201).json({
+              success: true,
+            });
+          }
+        }
+      }
+    });
+  } catch (error) {
+    res.status(503).json({
+      success: false,
+      error,
+    });
+  }
 };
 
 module.exports = {
