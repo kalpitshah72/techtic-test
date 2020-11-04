@@ -34,6 +34,7 @@ export default function Form() {
     } else if (isEmpty(formDetails.hobby)) {
       showError("Hobby");
     } else {
+      setError("");
       console.log(formDetails);
     }
   };

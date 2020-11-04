@@ -3,8 +3,10 @@ import { Button } from "antd";
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 export default function Login() {
+  const history = useHistory();
   const responseGoogle = (data) => {
     if (data.tokenId !== undefined) {
       axios
@@ -14,6 +16,7 @@ export default function Login() {
         .then((res) => {
           console.log(res.data);
           localStorage.setItem("success", res.data.success);
+          history.push("/form");
         });
     }
   };
@@ -27,6 +30,7 @@ export default function Login() {
         .then((res) => {
           console.log(res.data);
           localStorage.setItem("success", res.data.success);
+          history.push("/form");
         });
     }
   };
