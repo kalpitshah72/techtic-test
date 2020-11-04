@@ -54,7 +54,15 @@ export default function Form() {
           }
         })
         .then((res) => {
-          console.log(res);
+          if (res) {
+            setFormDetails({
+              gender: null,
+              sport: [],
+              day: null,
+              hobby: null,
+            });
+            alert("Thanks for filling the form");
+          }
         });
     }
   };
@@ -62,12 +70,16 @@ export default function Form() {
   return (
     <div>
       Gender
-      <Radio.Group onChange={onChange}>
+      <Radio.Group onChange={onChange} value={formDetails.gender}>
         <Radio value={"Male"}>Male</Radio>
         <Radio value={"Female"}>Female</Radio>
       </Radio.Group>
       Favourite Sport
-      <Checkbox.Group options={plainOptions} onChange={handleCheckBox} />
+      <Checkbox.Group
+        options={plainOptions}
+        onChange={handleCheckBox}
+        value={formDetails.sport}
+      />
       Enter Day
       <br />
       <Input
@@ -75,6 +87,7 @@ export default function Form() {
         onChange={(e) =>
           setFormDetails({ ...formDetails, day: e.target.value })
         }
+        value={formDetails.day}
       />
       <br />
       Add Hobbies
@@ -84,6 +97,7 @@ export default function Form() {
         onChange={(e) =>
           setFormDetails({ ...formDetails, hobby: e.target.value })
         }
+        value={formDetails.hobby}
       />
       <br />
       <Button type="primary" onClick={onSubmit}>
