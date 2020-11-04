@@ -1,6 +1,8 @@
 const { OAuth2Client } = require("google-auth-library");
 const FB = require("fb");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Form = require("../models/Form");
 require("dotenv").config();
 
 const google = async (req, res) => {
@@ -16,8 +18,18 @@ const google = async (req, res) => {
       email: payload["email"],
     });
     if (existing_user) {
+      const token = jwt.sign(
+        {
+          email: existing_user.email,
+        },
+        "secretKey",
+        {
+          expiresIn: "30d",
+        }
+      );
       res.status(201).json({
         success: true,
+        token,
       });
     } else {
       const user = new User({
@@ -26,8 +38,18 @@ const google = async (req, res) => {
       });
       const saved_user = await user.save();
       if (saved_user) {
+        const token = jwt.sign(
+          {
+            email: saved_user.email,
+          },
+          "secretKey",
+          {
+            expiresIn: "30d",
+          }
+        );
         res.status(201).json({
           success: true,
+          token,
         });
       }
     }
@@ -45,6 +67,19 @@ const facebook = async (req, res) => {
     email: resFacebook["email"],
   });
   if (existing_user) {
+    const token = jwt.sign(
+      {
+        email: existing_user.email,
+      },
+      "secretKey",
+      {
+        expiresIn: "30d",
+      }
+    );
+    res.status(201).json({
+      success: true,
+      token,
+    });
   } else {
     const user = new User({
       username: resFacebook["name"],
@@ -52,14 +87,35 @@ const facebook = async (req, res) => {
     });
     const saved_user = await user.save();
     if (saved_user) {
+      const token = jwt.sign(
+        {
+          email: saved_user.email,
+        },
+        "secretKey",
+        {
+          expiresIn: "30d",
+        }
+      );
       res.status(201).json({
         success: true,
+        token,
       });
     }
   }
 };
 
+const form = async (req, res) => {
+  const { gender, day, hobby, sport } = req.body;
+  const formInstance = new Form({
+    day,
+    gender,
+    hobby,
+    sport,
+  });
+};
+
 module.exports = {
   google,
   facebook,
+  form,
 };

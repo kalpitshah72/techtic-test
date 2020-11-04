@@ -15,7 +15,7 @@ function App() {
           <Login />
         </Route>
         <Route path="/form">
-          {localStorage.getItem("success") === "true" ? (
+          {localStorage.getItem("token") !== null ? (
             <Form />
           ) : (
             <Redirect to={"/"} />

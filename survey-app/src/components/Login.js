@@ -14,8 +14,7 @@ export default function Login() {
           tokenId: data.tokenId,
         })
         .then((res) => {
-          console.log(res.data);
-          localStorage.setItem("success", res.data.success);
+          localStorage.setItem("token", res.data.token);
           history.push("/form");
         });
     }
@@ -28,8 +27,7 @@ export default function Login() {
           token: data.accessToken,
         })
         .then((res) => {
-          console.log(res.data);
-          localStorage.setItem("success", res.data.success);
+          localStorage.setItem("token", res.data.token);
           history.push("/form");
         });
     }
